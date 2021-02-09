@@ -72,7 +72,7 @@ def get_aspect_pairs(paper_id2paper, subset_ids, aspect, neg_ratio=0.5, max_pape
 
     for task, paper_ids in tqdm(aspect2paper_ids.items(), desc='Finding papers with same aspect', total=len(aspect2paper_ids)):
         for a in paper_ids:
-            for b in paper_ids:
+            for b in paper_ids:  # n(tasks)*n(papers)*(n(papers)-1)
                 if a != b:
                     pair_id = tuple(sorted([a, b]))
                     aspect_pairs.add(pair_id)

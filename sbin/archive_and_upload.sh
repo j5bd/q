@@ -58,9 +58,19 @@ tar -zcvf $OUT/whoosh_index.tar.gz $IN/whoosh_index/
 # Github: We don't limit the total size of the binary files in the release or the bandwidth used to deliver them. However, each individual file must be smaller than 2 GB.
 
 export GITHUB_TOKEN=
-export GITHUB_RELEASE=0.1  # release must be created manually first!!!
+export GITHUB_RELEASE=1  # release must be created manually first!!!
 export GITHUB_USER=
 export GITHUB_REPO=
+
+# Upload via https://github.com/github-release/github-releas
+for FPATH in $OUT/*
+do
+    FNAME=$(basename $FPATH)
+    echo "Uploading $FNAME ..."
+
+    ~/github-release upload --user $GITHUB_USER --repo $GITHUB_REPO --tag $GITHUB_RELEASE --name $FNAME --file $FPATH
+done
+
 
 # Upload via release API: https://github.blog/2013-09-25-releases-api-preview/
 for FPATH in $OUT/*
@@ -68,11 +78,10 @@ do
     FNAME=$(basename $FPATH)
     echo "Uploading $FNAME ..."
 
-    curl -H "Authorization: token $GITHUB_TOKEN"
-         -H "Accept: application/vnd.github.manifold-preview"
-         -H "Content-Type: application/gzip"
-         --data-binary @$FPATH
-         "https://uploads.github.com/repos/$GITHUB_USER/$GITHUB_REPO/releases/$GITHUB_RELEASE/assets?name=$FNAME"
+    curl -H "Authorization: token $GITHUB_TOKEN" \
+         -H "Accept: application/vnd.github.v3+json" \
+         -H "Content-Type: $(file -b --mime-type $FPATH)" \
+         --data-binary @$FPATH "https://api.github.com/repos/$GITHUB_USER/$GITHUB_REPO/releases/$GITHUB_RELEASE/assets?name=$FNAME"
 done
 
 # Print download commands

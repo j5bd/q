@@ -8,7 +8,7 @@ export APP_ROOT=$(dirname "$0")
 
 MODEL_NAME=scibert-scivocab-uncased
 HF_DATASET=paperswithcode_aspects
-LOSS=cosine
+LOSS=multiple_negatives_ranking
 TOP_KS=5,10,25,50
 TRAIN_BATCH_SIZE=25
 EVAL_BATCH_SIZE=25
